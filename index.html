@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capabilities — End-to-end solutions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink-900:#0A0A1F;
+    --purple-700:#6D28D9;
+    --purple-600:#7C3AED;
+    --purple-500:#9061F9;
+    --purple-300:#C4B5FD;
+    --lav-50:#F6F5FC;
+    --lav-100:#EFEBFB;
+    --line:#E7E4F3;
+    --ink:#171531;
+    --muted:#6B6885;
+    --blue:#3B82F6;
+    --green:#0FA968;
+    --amber:#E08E1D;
+    --teal:#0F9E8E;
+    --rose:#D63A72;
+    --sky:#2F8FD8;
+    --radius:16px;
+    --shadow: 0 1px 2px rgba(23,21,49,0.04), 0 8px 24px rgba(23,21,49,0.06);
+    font-family:'Inter',sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  html,body{margin:0;padding:0;background:var(--lav-50);color:var(--ink);}
+  h1,h2,h3,.display{font-family:'Sora',sans-serif;}
+  a{text-decoration:none;color:inherit;}
+  button{font-family:inherit;}
+
+  /* ---------- App chrome ---------- */
+  .topbar{
+    position:sticky;top:0;z-index:50;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:12px 28px;background:rgba(10,10,31,0.96);backdrop-filter:blur(8px);
+    border-bottom:1px solid rgba(255,255,255,0.06);
+  }
+  .brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:700;font-size:15px;letter-spacing:0.2px;}
+  .brand-mark{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,var(--purple-500),var(--sky));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;}
+  .pagenav{display:flex;gap:4px;background:rgba(255,255,255,0.04);padding:4px;border-radius:999px;border:1px solid rgba(255,255,255,0.08);}
+  .pagenav button{
+    border:none;background:transparent;color:#B7B4D6;padding:8px 16px;border-radius:999px;
+    font-size:13px;font-weight:600;cursor:pointer;transition:all .2s ease;
+  }
+  .pagenav button.active{background:linear-gradient(135deg,var(--purple-600),var(--purple-500));color:#fff;}
+  .pagenav button:not(.active):hover{color:#fff;}
+
+  .view{display:none;animation:fade .35s ease;}
+  .view.active{display:block;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+  .eyebrow{
+    font-size:12px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;
+    color:var(--purple-600);margin:0 0 10px;
+  }
+  .eyebrow.on-dark{color:var(--purple-300);}
+
+  /* ============ PAGE 1 — HERO ============ */
+  .hero{
+    background:
+      radial-gradient(60% 55% at 12% 100%, rgba(124,58,237,0.35), transparent 60%),
+      radial-gradient(45% 50% at 95% 15%, rgba(47,143,216,0.18), transparent 60%),
+      linear-gradient(180deg,#0A0A1F 0%, #0D0C24 100%);
+    color:#fff;padding:64px 48px 56px;min-height:560px;
+  }
+  .hero-inner{max-width:920px;}
+  .hero h1{font-size:44px;line-height:1.15;font-weight:700;margin:0 0 18px;}
+  .hero h1 .grad{background:linear-gradient(100deg,#B98CFF,#8B5CF6 45%,#5EC9E8);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .hero p.lead{font-size:16px;line-height:1.6;color:#C7C4E0;max-width:640px;margin:0 0 40px;}
+
+  .cap-row{display:flex;gap:34px;flex-wrap:wrap;margin-bottom:44px;}
+  .cap-item{display:flex;flex-direction:column;align-items:center;gap:10px;width:90px;background:none;border:none;cursor:pointer;padding:0;}
+  .cap-circle{
+    width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    border:1.5px solid currentColor;background:rgba(255,255,255,0.03);transition:transform .18s ease, background .18s ease;
+  }
+  .cap-item:hover .cap-circle{background:rgba(255,255,255,0.1);transform:translateY(-3px);}
+  .cap-item span{font-size:12.5px;color:#DAD8EE;text-align:center;line-height:1.3;font-weight:500;}
+
+  .partner-banner{
+    display:flex;align-items:center;gap:20px;flex-wrap:wrap;
+    background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);
+    border-radius:14px;padding:20px 26px;
+  }
+  .partner-banner .icon-badge{
+    width:38px;height:38px;flex:0 0 auto;border-radius:10px;background:rgba(139,92,246,0.18);
+    display:flex;align-items:center;justify-content:center;color:#C4B5FD;
+  }
+  .partner-banner strong{display:block;font-size:14.5px;color:#fff;font-weight:600;margin-bottom:10px;}
+  .partner-tags{display:flex;gap:22px;flex-wrap:wrap;font-size:13px;color:#C7C4E0;}
+  .partner-tags span{display:flex;align-items:center;gap:7px;}
+
+  /* ============ PAGE 2 — WHAT WE DO ============ */
+  .page{padding:44px 48px 64px;}
+  .page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin-bottom:30px;flex-wrap:wrap;}
+  .page-head h2{font-size:30px;margin:0;font-weight:700;}
+  .page-note{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);max-width:220px;}
+  .page-note .dot{width:32px;height:32px;border-radius:50%;background:var(--lav-100);display:flex;align-items:center;justify-content:center;color:var(--purple-600);flex:0 0 auto;}
+
+  .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
+  .card{
+    background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+    padding:22px 20px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:12px;
+    transition:transform .18s ease, box-shadow .18s ease;cursor:pointer;text-align:left;width:100%;
+  }
+  .card:hover{transform:translateY(-3px);box-shadow:0 10px 28px rgba(23,21,49,0.10);}
+  .card.featured{background:linear-gradient(180deg,#F3EEFE,#EFE9FD);border-color:#E1D6FB;cursor:default;}
+  .card.featured:hover{transform:none;box-shadow:var(--shadow);}
+  .icon-tile{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+  .card h3{font-size:16px;margin:0;font-weight:700;}
+  .card p{font-size:13.3px;line-height:1.55;color:var(--muted);margin:0;flex:1;}
+  .explore{font-size:13px;font-weight:700;color:var(--purple-600);display:inline-flex;align-items:center;gap:4px;}
+
+  /* ============ PAGE 3 — DETAIL / SIDEBAR ============ */
+  .detail-shell{display:grid;grid-template-columns:230px 1fr;min-height:640px;}
+  .sidebar{
+    background:linear-gradient(190deg,#241C4F,#181235 70%);
+    color:#fff;padding:26px 18px;display:flex;flex-direction:column;
+  }
+  .sidebar-title{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#B7ADE8;padding:0 10px 14px;}
+  .sidebar nav{display:flex;flex-direction:column;gap:2px;flex:1;}
+  .sidebar nav button{
+    display:flex;align-items:center;gap:10px;text-align:left;border:none;background:transparent;color:#CBC5EA;
+    padding:11px 12px;border-radius:10px;font-size:13.5px;font-weight:500;cursor:pointer;width:100%;
+  }
+  .sidebar nav button.active{background:linear-gradient(135deg,var(--purple-600),#8B5CF6);color:#fff;font-weight:600;}
+  .sidebar nav button:not(.active):hover{background:rgba(255,255,255,0.06);}
+  .sidebar-cta{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:16px;margin-top:16px;}
+  .sidebar-cta p{font-size:13px;color:#DAD5F2;margin:0 0 12px;line-height:1.4;}
+  .sidebar-cta button{width:100%;background:linear-gradient(135deg,var(--purple-600),#8B5CF6);color:#fff;border:none;padding:10px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;}
+
+  .detail-main{padding:34px 40px 50px;}
+  .detail-top{display:flex;justify-content:space-between;gap:20px;margin-bottom:8px;align-items:flex-start;}
+  .detail-top h2{font-size:27px;margin:0 0 4px;}
+  .detail-top .tagline{font-size:14px;font-weight:600;margin:0 0 12px;}
+  .detail-top p.desc{font-size:13.5px;color:var(--muted);max-width:560px;line-height:1.6;margin:0;}
+  .glyph-box{width:64px;height:64px;border-radius:16px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;}
+
+  .tabs{display:flex;gap:0;margin:26px 0 22px;border-bottom:1px solid var(--line);flex-wrap:wrap;}
+  .tabs button{border:none;background:transparent;padding:10px 6px;margin-right:24px;font-size:13.5px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;}
+  .tabs button.active{color:var(--purple-700);border-bottom-color:var(--purple-600);}
+
+  .section-label{font-size:12px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--muted);margin:0 0 14px;}
+
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:8px;}
+  .mini-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);}
+  .mini-card .icon-tile{width:38px;height:38px;border-radius:10px;margin-bottom:12px;}
+  .mini-card h4{font-size:14.5px;margin:0 0 6px;font-weight:700;}
+  .mini-card p{font-size:12.5px;color:var(--muted);margin:0;line-height:1.5;}
+
+  .why-panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px;box-shadow:var(--shadow);}
+  .check-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,1fr);gap:14px 24px;}
+  .check-list li{display:flex;align-items:flex-start;gap:10px;font-size:13.3px;color:var(--ink);line-height:1.5;}
+  .check-list li .tick{color:var(--green);flex:0 0 auto;margin-top:1px;}
+
+  .section-block{margin-bottom:30px;}
+
+  /* ============ PAGE 4 — SUCCESS STORIES (& reused story cards) ============ */
+  .view-all{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);color:var(--purple-700);font-size:13px;font-weight:700;padding:10px 16px;border-radius:10px;box-shadow:var(--shadow);cursor:pointer;}
+  .story-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:20px;}
+  .story-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);}
+  .story-icons{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+  .story-icons .tile{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;}
+  .story-icons .arrow{color:#C6C2DC;}
+  .story-card h4{font-size:15px;margin:0 0 8px;font-weight:700;}
+  .story-card p{font-size:12.8px;color:var(--muted);line-height:1.55;margin:0 0 14px;}
+  .tag-pill{display:inline-block;font-size:11.5px;font-weight:700;color:var(--purple-700);background:var(--lav-100);padding:5px 10px;border-radius:7px;}
+
+  .stat-bar{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:0;
+    background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;
+  }
+  .stat{display:flex;align-items:center;gap:14px;padding:22px 26px;border-right:1px solid var(--line);}
+  .stat:last-child{border-right:none;}
+  .stat .icon-tile{width:40px;height:40px;border-radius:10px;background:var(--lav-100);color:var(--purple-600);}
+  .stat b{font-size:20px;display:block;}
+  .stat span{font-size:12px;color:var(--muted);}
+
+  @media (max-width: 980px){
+    .grid4,.story-grid,.grid3,.check-list{grid-template-columns:repeat(2,1fr);}
+    .detail-shell{grid-template-columns:1fr;}
+    .sidebar{flex-direction:row;overflow-x:auto;}
+    .stat-bar{grid-template-columns:repeat(2,1fr);}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="brand-mark">C</span> Capabilities</div>
+  <div class="pagenav">
+    <button data-target="p1" class="active">Overview</button>
+    <button data-target="p2">What We Do</button>
+    <button data-target="p3">Explore Capabilities</button>
+    <button data-target="p4">Success Stories</button>
+  </div>
+</div>
+
+<!-- ================= PAGE 1 — HERO ================= -->
+<section id="p1" class="view active">
+  <div class="hero">
+    <div class="hero-inner">
+      <p class="eyebrow on-dark">Our Capabilities</p>
+      <h1>End-to-end solutions.<br>Built for <span class="grad">impact.</span></h1>
+      <p class="lead">We design, build, modernize and manage digital solutions that help your business innovate, scale and lead.</p>
+
+      <div class="cap-row" id="capRow"></div>
+
+      <div class="partner-banner">
+        <div class="icon-badge">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div style="flex:1;min-width:220px;">
+          <strong>We partner with internal teams and external divisions to deliver measurable results</strong>
+          <div class="partner-tags">
+            <span>⌘ Accelerate Innovation</span>
+            <span>◇ Reduce Costs</span>
+            <span>◎ Improve Agility</span>
+            <span>✧ Drive Growth</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PAGE 2 — WHAT WE DO ================= -->
+<section id="p2" class="view">
+  <div class="page">
+    <div class="page-head">
+      <div>
+        <p class="eyebrow">Capabilities Overview</p>
+        <h2>What We Do</h2>
+      </div>
+      <div class="page-note">
+        <div class="dot">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <span>End-to-end services across the technology value chain</span>
+      </div>
+    </div>
+    <div class="grid4" id="whatWeDoGrid"></div>
+  </div>
+</section>
+
+<!-- ================= PAGE 3 — CAPABILITY EXPLORER ================= -->
+<section id="p3" class="view">
+  <div class="detail-shell">
+    <aside class="sidebar">
+      <div class="sidebar-title">Capabilities</div>
+      <nav id="sideNav"></nav>
+      <div class="sidebar-cta">
+        <p>Let's build something great together.</p>
+        <button>Contact Us</button>
+      </div>
+    </aside>
+    <div class="detail-main" id="detailMain"></div>
+  </div>
+</section>
+
+<!-- ================= PAGE 4 — SUCCESS STORIES ================= -->
+<section id="p4" class="view">
+  <div class="page">
+    <div class="page-head">
+      <div>
+        <p class="eyebrow">Success Stories</p>
+        <h2>Delivering Real Business Impact</h2>
+      </div>
+      <button class="view-all">View All Case Studies →</button>
+    </div>
+
+    <div class="story-grid" id="storyGrid"></div>
+
+    <div class="stat-bar" id="statBar"></div>
+  </div>
+</section>
+
+<script>
+/* ---------------- shared icon set ---------------- */
+const ICONS = {
+  code:  `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>`,
+  cloud: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a5 5 0 1 1 1.6-9.7A6 6 0 0 1 22 11.5 4.5 4.5 0 0 1 17.5 19Z"/></svg>`,
+  layers:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>`,
+  bolt:  `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
+  brain: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.5A2.5 2.5 0 0 1 4 17.5v-1a2.5 2.5 0 0 1-1-4.5 2.5 2.5 0 0 1 1-4.5v-1A2.5 2.5 0 0 1 6.5 4 2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.5A2.5 2.5 0 0 0 20 17.5v-1a2.5 2.5 0 0 0 1-4.5 2.5 2.5 0 0 0-1-4.5v-1A2.5 2.5 0 0 0 17.5 4 2.5 2.5 0 0 0 14.5 2Z"/></svg>`,
+  sync:  `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="8 21 3 21 3 16"/><line x1="20" y1="4" x2="3" y2="21"/></svg>`,
+  upload:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a5 5 0 1 1 1.6-9.7A6 6 0 0 1 22 11.5 4.5 4.5 0 0 1 17.5 19Z"/><polyline points="8 13 12 9 16 13"/><line x1="12" y1="9" x2="12" y2="21"/></svg>`,
+  star:  `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,
+  chart: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>`,
+  sparkle:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/></svg>`,
+  shield:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg>`,
+  users: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+  robot: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="9" width="16" height="11" rx="2"/><path d="M12 9V5"/><circle cx="8.5" cy="14.5" r="1"/><circle cx="15.5" cy="14.5" r="1"/><path d="M9 3h6"/></svg>`,
+  building:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="1"/><line x1="9" y1="7" x2="9" y2="7"/><line x1="15" y1="7" x2="15" y2="7"/><line x1="9" y1="12" x2="9" y2="12"/><line x1="15" y1="12" x2="15" y2="12"/><line x1="9" y1="17" x2="9" y2="17"/><line x1="15" y1="17" x2="15" y2="17"/></svg>`,
+  arrow: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`,
+  server:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>`,
+  plug:  `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22v-5"/><path d="M9 8V2"/><path d="M15 8V2"/><path d="M18 8v3a6 6 0 0 1-12 0V8Z"/></svg>`,
+  mobile:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>`,
+  wrench:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L2 19l3 3 7.3-7.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2-2Z"/></svg>`,
+  monitor:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="13" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`,
+  chat:  `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-4-1L3 21l1.5-5.5A8.38 8.38 0 0 1 3 11.5 8.5 8.5 0 0 1 11.5 3 8.38 8.38 0 0 1 21 11.5Z"/></svg>`,
+  database:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>`
+};
+function tile(icon,color,bg,size){return `<div class="icon-tile" style="color:${color};background:${bg}${size?`;width:${size}px;height:${size}px`:''}">${ICONS[icon]||''}</div>`;}
+
+/* =========================================================
+   CAPABILITY DATA MODEL
+   ========================================================= */
+const CAPABILITIES = {
+  appdev: {
+    label:'Application Development', short:'Apps Development', icon:'code', color:'#8B5CF6', bg:'#F3EEFE',
+    tagline:'Design. Build. Scale.',
+    desc:'We build modern, secure and scalable applications across web, backend and mobile — engineered for performance and built to grow with your business.',
+    subs:[
+      {icon:'building',label:'Enterprise Applications',desc:'Custom line-of-business applications built for scale, security and complex workflows.'},
+      {icon:'server',label:'Backend Development',desc:'Robust APIs, microservices and server-side systems engineered for performance.'},
+      {icon:'code',label:'Frontend Development',desc:'Responsive, accessible user interfaces built with modern frameworks.'},
+      {icon:'plug',label:'API & Integration',desc:'Connect systems and data sources with secure, well-documented APIs.'},
+      {icon:'mobile',label:'Mobile Applications',desc:'Native and cross-platform mobile apps for iOS and Android.'}
+    ],
+    whyUs:[
+      'Full-stack teams experienced across web, mobile and backend',
+      'Agile delivery with continuous testing and code quality gates',
+      'Architecture built to scale with your user base',
+      'Post-launch support and long-term maintainability'
+    ],
+    stories:[
+      {icon:'building',color:'#8B5CF6',bg:'#F3EEFE',title:'Enterprise Portal Rebuild',desc:'Rebuilt a customer-facing portal serving 50,000+ users with a modern, modular architecture.',tag:'Enterprise Applications'},
+      {icon:'plug',color:'#3B82F6',bg:'#EAF2FE',title:'Unified API Gateway',desc:'Designed a central API layer connecting 12 internal systems, cutting integration time by 40%.',tag:'API & Integration'},
+      {icon:'mobile',color:'#0FA968',bg:'#E9F7EF',title:'Cross-Platform Field App',desc:'Delivered a mobile app for field technicians used across 3 countries, working online and offline.',tag:'Mobile Applications'}
+    ]
+  },
+  appmod: {
+    label:'Application Modernization', short:'Application Modernization', icon:'layers', color:'#A855F7', bg:'#F3EEFE',
+    tagline:'Modernize. Transform. Future-proof.',
+    desc:'We modernize legacy systems and transform them into cloud-native, resilient architectures — reducing technical debt while protecting business continuity.',
+    subs:[
+      {icon:'layers',label:'Legacy Modernization',desc:'Re-architect aging systems without disrupting the business they run.'},
+      {icon:'cloud',label:'Cloud Native',desc:'Rebuild applications using containers, microservices and cloud-native patterns.'},
+      {icon:'sync',label:'Replatform',desc:'Move applications to modern platforms with minimal code change.'},
+      {icon:'wrench',label:'Refactoring',desc:'Restructure existing code to improve performance, security and maintainability.'}
+    ],
+    whyUs:[
+      'Proven frameworks for assessing and prioritizing legacy risk',
+      'Zero-downtime migration approaches',
+      'Deep experience modernizing regulated, mission-critical systems',
+      'Clear roadmap from current state to target architecture'
+    ],
+    stories:[
+      {icon:'layers',color:'#A855F7',bg:'#F3EEFE',title:'Lotus Notes Migration',desc:'Migrated 1,200+ Lotus Notes applications to modern platforms with improved usability and reduced costs.',tag:'Legacy Modernization'},
+      {icon:'cloud',color:'#3B82F6',bg:'#EAF2FE',title:'Monolith to Microservices',desc:'Decomposed a legacy monolith into containerized microservices, improving deployment speed by 3x.',tag:'Cloud Native'},
+      {icon:'wrench',color:'#0FA968',bg:'#E9F7EF',title:'.NET Modernization',desc:'Refactored a legacy .NET application for cloud-native deployment on Azure, improving availability and performance.',tag:'Refactoring'}
+    ]
+  },
+  cloudeng: {
+    label:'Cloud Engineering', short:'Cloud Engineering', icon:'cloud', color:'#3B82F6', bg:'#EAF2FE',
+    tagline:'Design. Automate. Secure.',
+    desc:'We design, build and manage secure cloud infrastructure with best-in-class DevOps practices, governance and round-the-clock operations.',
+    subs:[
+      {icon:'server',label:'Infrastructure',desc:'Scalable, resilient cloud infrastructure designed for reliability.'},
+      {icon:'sync',label:'DevOps',desc:'CI/CD pipelines and automation that speed up delivery.'},
+      {icon:'shield',label:'Security',desc:'Cloud security architecture and continuous threat monitoring.'},
+      {icon:'shield',label:'Governance',desc:'Policies, cost controls and compliance across your cloud estate.'},
+      {icon:'monitor',label:'Operations',desc:'24/7 monitoring, incident response and platform reliability.'}
+    ],
+    whyUs:[
+      'Certified engineers across AWS, Azure and GCP',
+      'Security and compliance built in from day one',
+      'Automation-first approach to reduce manual overhead',
+      'Transparent cost governance and optimization'
+    ],
+    stories:[
+      {icon:'server',color:'#3B82F6',bg:'#EAF2FE',title:'Enterprise Cloud Landing Zone',desc:'Designed and implemented an enterprise landing zone with governance, security and automated deployments.',tag:'Infrastructure'},
+      {icon:'sync',color:'#0FA968',bg:'#E9F7EF',title:'CI/CD Modernization',desc:'Automated release pipelines across 20+ services, cutting deployment time from days to minutes.',tag:'DevOps'},
+      {icon:'shield',color:'#D63A72',bg:'#FBE9F0',title:'Zero Trust Rollout',desc:'Implemented a zero-trust security model across a multi-cloud environment.',tag:'Security'}
+    ]
+  },
+  powerplatform: {
+    label:'Power Platform', short:'Power Platform', icon:'bolt', color:'#0FA968', bg:'#E9F7EF',
+    tagline:'Build. Automate. Analyze. Empower.',
+    desc:'We help organizations accelerate innovation and efficiency with Microsoft Power Platform solutions tailored to their business needs.',
+    subs:[
+      {icon:'bolt',label:'Power Apps',desc:'Custom apps, portals and solutions built on Power Apps and Dataverse.'},
+      {icon:'sync',label:'Power Automate',desc:'Automate workflows and business processes end to end.'},
+      {icon:'chart',label:'Power BI',desc:'Transform data into insights with interactive dashboards.'},
+      {icon:'sparkle',label:'Copilot',desc:'Add AI Builder and Copilot intelligence to your processes.'},
+      {icon:'shield',label:'Governance',desc:'Best practices, security, ALM and Center of Excellence.'},
+      {icon:'upload',label:'Migration',desc:'Migrate legacy platforms like Lotus Notes and SharePoint.'}
+    ],
+    whyUs:[
+      'Faster time-to-market with low-code delivery',
+      'Lower development cost than traditional builds',
+      'Empower citizen developers across the business',
+      'Secure, governed and compliant by design'
+    ],
+    stories:[
+      {icon:'upload',color:'#0FA968',bg:'#E9F7EF',title:'Lotus Notes Migration',desc:'Migrated 1,200+ Lotus Notes applications to Power Platform with improved usability and reduced costs.',tag:'Migration'},
+      {icon:'sync',color:'#3B82F6',bg:'#EAF2FE',title:'Aqualine Process Overhaul',desc:'Modernized legacy processes and migrated to Power Platform, enabling 50% faster process execution.',tag:'Power Automate'},
+      {icon:'chart',color:'#E08E1D',bg:'#FDF1E2',title:'Executive Insights Dashboard',desc:'Built a Power BI dashboard suite giving leadership real-time visibility across operations.',tag:'Power BI'}
+    ]
+  },
+  ai: {
+    label:'Artificial Intelligence', short:'AI Solutions', icon:'brain', color:'#E08E1D', bg:'#FDF1E2',
+    tagline:'Insight. Automation. Intelligence.',
+    desc:'We leverage AI, generative AI and intelligent automation to help organizations unlock insight and create new possibilities.',
+    subs:[
+      {icon:'brain',label:'AI Solutions',desc:'Applied AI solutions tailored to real business problems.'},
+      {icon:'sparkle',label:'GenAI',desc:'Generative AI capabilities built on modern foundation models.'},
+      {icon:'robot',label:'AI Agents',desc:'Autonomous agents that complete tasks and workflows.'},
+      {icon:'database',label:'RAG',desc:'Retrieval-augmented generation grounded in your own data.'},
+      {icon:'bolt',label:'AI Automation',desc:'Intelligent automation across business processes.'}
+    ],
+    whyUs:[
+      'Practical AI grounded in measurable business outcomes',
+      'Responsible AI practices and governance built in',
+      'Experience across leading model providers and platforms',
+      'From proof of concept to production at scale'
+    ],
+    stories:[
+      {icon:'robot',color:'#E08E1D',bg:'#FDF1E2',title:'AI-Powered Support Bot',desc:'Built an AI-powered support solution using Azure OpenAI and Power Platform, improving response time by 60%.',tag:'AI Agents'},
+      {icon:'database',color:'#3B82F6',bg:'#EAF2FE',title:'Knowledge Assistant (RAG)',desc:'Deployed a retrieval-augmented assistant grounded in internal documentation, cutting search time significantly.',tag:'RAG'},
+      {icon:'bolt',color:'#0FA968',bg:'#E9F7EF',title:'Automated Claims Triage',desc:'Automated first-pass claims triage using GenAI, reducing manual review workload.',tag:'AI Automation'}
+    ]
+  },
+  dynamics: {
+    label:'Dynamics 365', short:'Dynamics 365', icon:'sync', color:'#0F9E8E', bg:'#E5F6F4',
+    tagline:'Connect. Serve. Grow.',
+    desc:'We implement, customize and integrate Dynamics 365 CRM and ERP solutions that connect your customer and operational data.',
+    subs:[
+      {icon:'users',label:'CRM',desc:'Sales and marketing capabilities to manage the full customer lifecycle.'},
+      {icon:'building',label:'ERP',desc:'Finance and operations backbone for the business.'},
+      {icon:'chat',label:'Customer Service',desc:'Unified case management and service experiences.'},
+      {icon:'plug',label:'Integrations',desc:'Connect Dynamics 365 to your broader technology estate.'}
+    ],
+    whyUs:[
+      'Certified Dynamics 365 implementation specialists',
+      'Proven approach to data migration and system integration',
+      'Tailored configuration, not one-size-fits-all templates',
+      'Ongoing support beyond go-live'
+    ],
+    stories:[
+      {icon:'building',color:'#0F9E8E',bg:'#E5F6F4',title:'Dynamics 365 Rollout',desc:'Implemented Dynamics 365 Finance and Operations with seamless integration to legacy systems.',tag:'ERP'},
+      {icon:'users',color:'#8B5CF6',bg:'#F3EEFE',title:'Unified Customer View',desc:'Integrated CRM and support systems into Dynamics 365 for a single view of the customer.',tag:'CRM'},
+      {icon:'chat',color:'#3B82F6',bg:'#EAF2FE',title:'Service Desk Modernization',desc:'Modernized case management workflows, improving first-response time across support teams.',tag:'Customer Service'}
+    ]
+  },
+  migration: {
+    label:'Migration Services', short:'Migrations', icon:'upload', color:'#D63A72', bg:'#FBE9F0',
+    tagline:'Move. Modernize. Minimize risk.',
+    desc:'We seamlessly migrate your applications, data and platforms to modern technology with minimal disruption to the business.',
+    subs:[
+      {icon:'upload',label:'Application Migration',desc:'Move applications to modern platforms with minimal rework.'},
+      {icon:'cloud',label:'Cloud Migration',desc:'Migrate workloads to the cloud provider that fits your needs.'},
+      {icon:'database',label:'Data Migration',desc:'Move and validate data with accuracy and integrity.'},
+      {icon:'sync',label:'Platform Migration',desc:'Transition between platforms and vendors with confidence.'}
+    ],
+    whyUs:[
+      'Structured migration methodology that reduces risk',
+      'Minimal downtime with rollback plans in place',
+      'Data integrity validated at every step',
+      'Experience migrating regulated, mission-critical systems'
+    ],
+    stories:[
+      {icon:'upload',color:'#D63A72',bg:'#FBE9F0',title:'Lotus Notes Migration',desc:'Migrated 1,200+ Lotus Notes applications to Power Platform with improved usability and reduced costs.',tag:'Application Migration'},
+      {icon:'cloud',color:'#3B82F6',bg:'#EAF2FE',title:'Aqualine Cloud Move',desc:'Migrated legacy on-prem workloads to the cloud, enabling 50% faster process execution.',tag:'Cloud Migration'},
+      {icon:'database',color:'#0FA968',bg:'#E9F7EF',title:'Enterprise Data Migration',desc:'Migrated and validated core business data across a system consolidation with zero data loss.',tag:'Data Migration'}
+    ]
+  }
+};
+const CAP_ORDER = ['appdev','appmod','cloudeng','powerplatform','ai','dynamics','migration'];
+
+/* ---------------- Page nav switching ---------------- */
+const navBtns = document.querySelectorAll('.pagenav button');
+function switchPage(target){
+  navBtns.forEach(x=>x.classList.toggle('active', x.dataset.target===target));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(target).classList.add('active');
+  window.scrollTo({top:0,behavior:'instant'});
+}
+navBtns.forEach(b=>b.addEventListener('click', ()=>switchPage(b.dataset.target)));
+
+function goToCapability(key){
+  switchPage('p3');
+  renderCapability(key);
+}
+
+/* ---------------- Page 1: capability row ---------------- */
+document.getElementById('capRow').innerHTML = CAP_ORDER.map(key=>{
+  const c = CAPABILITIES[key];
+  return `<button class="cap-item" style="color:${c.color}" onclick="goToCapability('${key}')">
+    <div class="cap-circle">${ICONS[c.icon]}</div>
+    <span>${c.short}</span>
+  </button>`;
+}).join('');
+
+/* ---------------- Page 2: What We Do grid ---------------- */
+document.getElementById('whatWeDoGrid').innerHTML = CAP_ORDER.map(key=>{
+  const c = CAPABILITIES[key];
+  return `<button class="card" onclick="goToCapability('${key}')">
+    ${tile(c.icon,c.color,c.bg)}
+    <h3>${c.label}</h3>
+    <p>${c.desc}</p>
+    <span class="explore">Explore ${ICONS.arrow}</span>
+  </button>`;
+}).join('') + `
+  <div class="card featured">
+    ${tile('star','#7C3AED','#EFEAFD')}
+    <h3>Trusted Partner</h3>
+    <p>Proven delivery experience across industries with hundreds of successful engagements.</p>
+  </div>`;
+
+/* ---------------- Page 3: sidebar + dynamic capability content ---------------- */
+document.getElementById('sideNav').innerHTML = CAP_ORDER.map(key=>{
+  const c = CAPABILITIES[key];
+  return `<button id="side-${key}" onclick="renderCapability('${key}')">${ICONS[c.icon]} ${c.label}</button>`;
+}).join('');
+
+function renderCapability(key){
+  const c = CAPABILITIES[key];
+  document.querySelectorAll('#sideNav button').forEach(b=>b.classList.toggle('active', b.id===`side-${key}`));
+
+  const subsHtml = c.subs.map(s=>`
+    <div class="mini-card">
+      ${tile(s.icon,c.color,c.bg,38)}
+      <h4>${s.label}</h4>
+      <p>${s.desc}</p>
+    </div>`).join('');
+
+  const whyHtml = c.whyUs.map(w=>`<li><span class="tick">✔</span>${w}</li>`).join('');
+
+  const storiesHtml = c.stories.map(s=>`
+    <div class="story-card">
+      <div class="story-icons">${tile(s.icon,s.color,s.bg,38)}</div>
+      <h4>${s.title}</h4>
+      <p>${s.desc}</p>
+      <span class="tag-pill">${s.tag}</span>
+    </div>`).join('');
+
+  document.getElementById('detailMain').innerHTML = `
+    <div class="detail-top">
+      <div>
+        <h2>${c.label}</h2>
+        <p class="tagline" style="color:${c.color}">${c.tagline}</p>
+        <p class="desc">${c.desc}</p>
+      </div>
+      <div class="glyph-box" style="background:${c.bg};color:${c.color}">
+        ${ICONS[c.icon].replace('width="20" height="20"','width="30" height="30"')}
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="active" onclick="scrollToSection('sec-areas')">Overview</button>
+      <button onclick="scrollToSection('sec-areas')">Services & Areas We Work In</button>
+      <button onclick="scrollToSection('sec-why')">Why Choose Us</button>
+      <button onclick="scrollToSection('sec-stories')">Success Stories</button>
+    </div>
+
+    <div class="section-block" id="sec-areas">
+      <p class="section-label">Services &amp; Areas We Work In</p>
+      <div class="grid3">${subsHtml}</div>
+    </div>
+
+    <div class="section-block" id="sec-why">
+      <p class="section-label">Why Choose Us</p>
+      <div class="why-panel"><ul class="check-list">${whyHtml}</ul></div>
+    </div>
+
+    <div class="section-block" id="sec-stories">
+      <p class="section-label">Success Stories</p>
+      <div class="story-grid" style="margin-bottom:0;">${storiesHtml}</div>
+    </div>
+  `;
+}
+function scrollToSection(id){
+  document.getElementById(id).scrollIntoView({behavior:'smooth', block:'start'});
+}
+renderCapability('powerplatform');
+
+/* ---------------- Page 4: success stories + stats (aggregate) ---------------- */
+const featuredStories = [
+  CAPABILITIES.migration.stories[0],
+  CAPABILITIES.powerplatform.stories[1],
+  CAPABILITIES.appmod.stories[2],
+  CAPABILITIES.cloudeng.stories[0],
+  CAPABILITIES.ai.stories[0],
+  CAPABILITIES.dynamics.stories[0]
+];
+document.getElementById('storyGrid').innerHTML = featuredStories.map(s=>`
+  <div class="story-card">
+    <div class="story-icons">${tile(s.icon,s.color,s.bg,38)}</div>
+    <h4>${s.title}</h4>
+    <p>${s.desc}</p>
+    <span class="tag-pill">${s.tag}</span>
+  </div>`).join('');
+
+const stats = [
+  {icon:'users',value:'200+',label:'Projects Delivered'},
+  {icon:'users',value:'50+',label:'Happy Clients'},
+  {icon:'building',value:'10+',label:'Industries Served'},
+  {icon:'star',value:'98%',label:'Client Satisfaction'}
+];
+document.getElementById('statBar').innerHTML = stats.map(s=>`
+  <div class="stat">
+    <div class="icon-tile">${ICONS[s.icon]}</div>
+    <div><b>${s.value}</b><span>${s.label}</span></div>
+  </div>`).join('');
+</script>
+</body>
+</html>
